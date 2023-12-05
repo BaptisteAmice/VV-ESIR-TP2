@@ -28,11 +28,25 @@ public class Main {
         }
 
         SourceRoot root = new SourceRoot(file.toPath());
+
+        //print all public elements
+        /* 
         PublicElementsPrinter printer = new PublicElementsPrinter();
         root.parse("", (localPath, absolutePath, result) -> {
             result.ifSuccessful(unit -> unit.accept(printer, null));
             return SourceRoot.Callback.Result.DONT_SAVE;
+        });*/
+
+        //print all private fields without public getter
+        PrivateFieldsPrinter printer = new PrivateFieldsPrinter();
+        root.parse("", (localPath, absolutePath, result) -> {
+            result.ifSuccessful(unit -> unit.accept(printer, null));
+            printer.getPrivateAttributesNamesWithoutPublicGetter();
+            return SourceRoot.Callback.Result.DONT_SAVE;
         });
+
+
+
     }
 
 
