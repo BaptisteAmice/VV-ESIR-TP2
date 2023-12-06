@@ -1,5 +1,7 @@
 package fr.istic.vv;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -13,6 +15,7 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
 
     private ArrayList<MethodDeclaration> publicMethods = new ArrayList<MethodDeclaration>();
     private ArrayList<FieldDeclaration> privateFields = new ArrayList<FieldDeclaration>();
+    private String currentParsedClass = "";
 
     @Override
     public void visit(CompilationUnit unit, Void arg) {
@@ -47,6 +50,7 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
 
     @Override
     public void visit(ClassOrInterfaceDeclaration declaration, Void arg) {
+        currentParsedClass = declaration.getNameAsString();
         visitTypeDeclaration(declaration, arg);
     }
 
@@ -62,26 +66,86 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
     }
 
 
-    //get all private fields without public getter
-    public void getPrivateAttributesNamesWithoutPublicGetter() {
-       //print all private fields without public getter
-         for(FieldDeclaration field : privateFields) {
-              //get field name
-              String fieldName = field.getVariable(0).getNameAsString();
-              //check if there is a public getter
-              boolean hasPublicGetter = false;
-              for(MethodDeclaration method : publicMethods) {
-                //check if method is a getter
-                if(method.getNameAsString().equals("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1))) {
-                     hasPublicGetter = true;
-                     break;
-                }
+        //return a list of all private fields without public getter: type, name and the class of wich they are a parameter
+        public ArrayList<String> getPrivateAttributesNamesWithoutPublicGetter() {
+            ArrayList<String> privateAttributesNamesWithoutPublicGetterAndTheirClassName = new ArrayList<String>();
+            //print all private fields without public getter
+              for(FieldDeclaration field : privateFields) {
+                   //get field name
+                   String fieldName = field.getVariable(0).getNameAsString();
+                   //check if there is a public getter
+                   boolean hasPublicGetter = false;
+                   for(MethodDeclaration method : publicMethods) {
+                     //check if method respect the getter naming convention
+                     if(method.getNameAsString().equals("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1))) {
+                         //if the return type is the same as the field type
+                         if(method.getTypeAsString().equals(field.getVariable(0).getTypeAsString())) {
+                             hasPublicGetter = true;
+                             break;
+                         }
+                     }
+                   }
+                   //print field name if there is no public getter
+                   if(!hasPublicGetter)
+                    privateAttributesNamesWithoutPublicGetterAndTheirClassName.add(field.getVariable(0).getTypeAsString() + " " + fieldName + " " + currentParsedClass);
               }
-              //print field name if there is no public getter
-              if(!hasPublicGetter)
-                System.out.println(fieldName);
+              return privateAttributesNamesWithoutPublicGetterAndTheirClassName;
          }
 
-    }
-    
+         //generate a html report from a list of string and a name
+            public void generateHtmlReport(ArrayList<String> list, String name) {
+                //remove the path from the name
+                String fileName = name.substring(name.lastIndexOf('/') + 1);
+                String html = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "<style>\n" +
+                "table {\n" +
+                "  font-family: arial, sans-serif;\n" +
+                "  border-collapse: collapse;\n" +
+                "  width: 100%;\n" +
+                "}\n" +
+                "\n" +
+                "td, th {\n" +
+                "  border: 1px solid #dddddd;\n" +
+                "  text-align: left;\n" +
+                "  padding: 8px;\n" +
+                "}\n" +
+                "\n" +
+                "tr:nth-child(even) {\n" +
+                "  background-color: #dddddd;\n" +
+                "}\n" +
+                "</style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "\n" +
+                "<h2>" + fileName + "</h2>\n" +
+                "\n" +
+                "<table>\n" +
+                "  <tr>\n" +
+                "    <th>Type</th>\n" +
+                "    <th>Name</th>\n" +
+                "    <th>Class</th>\n" +
+                "  </tr>\n";
+                for(String s : list) {
+                    String[] split = s.split(" ");
+                    html += "  <tr>\n" +
+                    "    <td>" + split[0] + "</td>\n" +
+                    "    <td>" + split[1] + "</td>\n" +
+                    "    <td>" + split[2] + "</td>\n" +
+                    "  </tr>\n";
+                }
+                html += "</table>\n" +
+                "\n" +
+                "</body>\n" +
+                "</html>";
+                //Save html file
+                try {
+                    PrintWriter out = new PrintWriter(name);
+                    out.println(html);
+                    out.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
 }

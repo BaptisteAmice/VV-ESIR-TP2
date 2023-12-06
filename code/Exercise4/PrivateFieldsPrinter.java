@@ -61,7 +61,6 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
         if(!declaration.isPrivate()) return;
     }
 
-
     //get all private fields without public getter
     public void getPrivateAttributesNamesWithoutPublicGetter() {
        //print all private fields without public getter
@@ -71,10 +70,13 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
               //check if there is a public getter
               boolean hasPublicGetter = false;
               for(MethodDeclaration method : publicMethods) {
-                //check if method is a getter
+                //check if method respect the getter naming convention
                 if(method.getNameAsString().equals("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1))) {
-                     hasPublicGetter = true;
-                     break;
+                    //if the return type is the same as the field type
+                    if(method.getTypeAsString().equals(field.getVariable(0).getTypeAsString())) {
+                        hasPublicGetter = true;
+                        break;
+                    }
                 }
               }
               //print field name if there is no public getter
@@ -83,5 +85,32 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
          }
 
     }
-    
+
+    //return a list of all private fields without public getter and their class name
+    public ArrayList<String> getPrivateAttributesNamesWithoutPublicGetterAndTheirClassName() {
+        ArrayList<String> privateAttributesNamesWithoutPublicGetterAndTheirClassName = new ArrayList<String>();
+        //print all private fields without public getter
+          for(FieldDeclaration field : privateFields) {
+               //get field name
+               String fieldName = field.getVariable(0).getNameAsString();
+               //check if there is a public getter
+               boolean hasPublicGetter = false;
+               for(MethodDeclaration method : publicMethods) {
+                 //check if method respect the getter naming convention
+                 if(method.getNameAsString().equals("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1))) {
+                     //if the return type is the same as the field type
+                     if(method.getTypeAsString().equals(field.getVariable(0).getTypeAsString())) {
+                         hasPublicGetter = true;
+                         break;
+                     }
+                 }
+               }
+               //print field name if there is no public getter
+               if(!hasPublicGetter)
+                privateAttributesNamesWithoutPublicGetterAndTheirClassName.add(field.getVariable(0).getTypeAsString() + " " + fieldName);
+          }
+          return privateAttributesNamesWithoutPublicGetterAndTheirClassName;
+     }
+
+     //return a list of all private fields without public getter and their class name
 }
