@@ -46,11 +46,12 @@ public class Main {
             return SourceRoot.Callback.Result.DONT_SAVE;
         });*/
 
+        /* 
         CyclomaticComplexityParser cycloParser = new CyclomaticComplexityParser();
         root.parse("", (localPath, absolutePath, result) -> {
             result.ifSuccessful(unit -> unit.accept(cycloParser, null));
             return SourceRoot.Callback.Result.DONT_SAVE;
-        });
+        });*/
 
 
     }

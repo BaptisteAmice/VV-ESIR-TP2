@@ -9,6 +9,8 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithDeclaration;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
+import com.github.javaparser.ast.nodeTypes.NodeWithType;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorWithDefaults;
 
 
@@ -84,9 +86,14 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
                          }
                      }
                    }
-                   //add field name if there is no public getter
+                   //add field if there is no public getter
                    if(!hasPublicGetter)
-                    privateAttributesNamesWithoutPublicGetterAndTheirClassName.add(field.getVariable(0).getTypeAsString() + " " + fieldName + " " + ((NodeWithSimpleName<MethodDeclaration>) field.getParentNode().get()).getNameAsString());
+                    //field type, field name, class name, class package
+                    privateAttributesNamesWithoutPublicGetterAndTheirClassName.add(field.getVariable(0).getTypeAsString() + " " 
+                    + fieldName + " " + ((NodeWithSimpleName<MethodDeclaration>) field.getParentNode().get()).getNameAsString()
+                    );
+                    
+                    //field lines if needed : field.getRange().get().begin.line + " " + field.getRange().get().end.line
               }
               return privateAttributesNamesWithoutPublicGetterAndTheirClassName;
          }
@@ -125,6 +132,7 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
                 "    <th>Type</th>\n" +
                 "    <th>Name</th>\n" +
                 "    <th>Class</th>\n" +
+                //"    <th>Package</th>\n" +
                 "  </tr>\n";
                 for(String s : list) {
                     String[] split = s.split(" ");
@@ -132,6 +140,7 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
                     "    <td>" + split[0] + "</td>\n" +
                     "    <td>" + split[1] + "</td>\n" +
                     "    <td>" + split[2] + "</td>\n" +
+                    //"    <td>" + split[3] + "</td>\n" +
                     "  </tr>\n";
                 }
                 html += "</table>\n" +
