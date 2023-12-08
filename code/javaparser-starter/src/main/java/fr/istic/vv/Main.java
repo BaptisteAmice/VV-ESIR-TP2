@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        if(args.length < 2) {
+        if(args.length < 1) {
             System.err.println("Should provide the path to the source code and the path to the report");
             System.exit(1);
         }
