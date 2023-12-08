@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithDeclaration;
+import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.visitor.VoidVisitorWithDefaults;
 
 
@@ -15,7 +16,6 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
 
     private ArrayList<MethodDeclaration> publicMethods = new ArrayList<MethodDeclaration>();
     private ArrayList<FieldDeclaration> privateFields = new ArrayList<FieldDeclaration>();
-    private String currentParsedClass = "";
 
     @Override
     public void visit(CompilationUnit unit, Void arg) {
@@ -50,7 +50,6 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
 
     @Override
     public void visit(ClassOrInterfaceDeclaration declaration, Void arg) {
-        currentParsedClass = declaration.getNameAsString();
         visitTypeDeclaration(declaration, arg);
     }
 
@@ -85,9 +84,9 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
                          }
                      }
                    }
-                   //print field name if there is no public getter
+                   //add field name if there is no public getter
                    if(!hasPublicGetter)
-                    privateAttributesNamesWithoutPublicGetterAndTheirClassName.add(field.getVariable(0).getTypeAsString() + " " + fieldName + " " + currentParsedClass);
+                    privateAttributesNamesWithoutPublicGetterAndTheirClassName.add(field.getVariable(0).getTypeAsString() + " " + fieldName + " " + ((NodeWithSimpleName<MethodDeclaration>) field.getParentNode().get()).getNameAsString());
               }
               return privateAttributesNamesWithoutPublicGetterAndTheirClassName;
          }
