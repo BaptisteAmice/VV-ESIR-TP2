@@ -38,13 +38,13 @@ public class Main {
         });*/
 
         //print all private fields without public getter
-        /*PrivateFieldsPrinter printer = new PrivateFieldsPrinter();
+        PrivateFieldsPrinter printer = new PrivateFieldsPrinter();
         root.parse("", (localPath, absolutePath, result) -> {
             //System.out.println(printer.getPrivateAttributesNamesWithoutPublicGetter());
             printer.generateHtmlReport(printer.getPrivateAttributesNamesWithoutPublicGetter(),args[1]);
             result.ifSuccessful(unit -> unit.accept(printer, null));
             return SourceRoot.Callback.Result.DONT_SAVE;
-        });*/
+        });
 
         /* 
         CyclomaticComplexityParser cycloParser = new CyclomaticComplexityParser();

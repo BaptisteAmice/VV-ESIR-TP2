@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithDeclaration;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
@@ -43,7 +44,7 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
                 privateFields.add(field);
         }
         
-        // Printing nested types in the top level
+        // nested types in the top level
         for(BodyDeclaration<?> member : declaration.getMembers()) {
             if (member instanceof TypeDeclaration)
                 member.accept(this, arg);
@@ -65,6 +66,14 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
     public void visit(FieldDeclaration declaration, Void arg) {
         if(!declaration.isPrivate()) return;
     }
+
+    //print package name
+    @Override
+    public void visit(PackageDeclaration declaration, Void arg) {
+        
+    }
+
+
 
 
         //return a list of all private fields without public getter: type, name and the class of wich they are a parameter
@@ -88,12 +97,20 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
                    }
                    //add field if there is no public getter
                    if(!hasPublicGetter)
-                    //field type, field name, class name, class package
-                    privateAttributesNamesWithoutPublicGetterAndTheirClassName.add(field.getVariable(0).getTypeAsString() + " " 
-                    + fieldName + " " + ((NodeWithSimpleName<MethodDeclaration>) field.getParentNode().get()).getNameAsString()
-                    );
-                    
-                    //field lines if needed : field.getRange().get().begin.line + " " + field.getRange().get().end.line
+                   {
+                            //get package name 
+                        String packageName = "";
+                        if(field.getParentNode().get().getParentNode().get() instanceof CompilationUnit)
+                            packageName = ((CompilationUnit) field.getParentNode().get().getParentNode().get()).getPackageDeclaration().get().getNameAsString();
+                        else
+                            packageName = "none";
+                        //field type, field name, class name, class package
+                        privateAttributesNamesWithoutPublicGetterAndTheirClassName.add(field.getVariable(0).getTypeAsString() + " " 
+                        + fieldName + " " + ((NodeWithSimpleName<MethodDeclaration>) field.getParentNode().get()).getNameAsString() + " " + packageName
+                        );
+                        
+                        //field lines if needed : field.getRange().get().begin.line + " " + field.getRange().get().end.line
+                   }
               }
               return privateAttributesNamesWithoutPublicGetterAndTheirClassName;
          }
@@ -132,7 +149,7 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
                 "    <th>Type</th>\n" +
                 "    <th>Name</th>\n" +
                 "    <th>Class</th>\n" +
-                //"    <th>Package</th>\n" +
+                "    <th>Package</th>\n" +
                 "  </tr>\n";
                 for(String s : list) {
                     String[] split = s.split(" ");
@@ -140,7 +157,7 @@ public class PrivateFieldsPrinter extends VoidVisitorWithDefaults<Void> {
                     "    <td>" + split[0] + "</td>\n" +
                     "    <td>" + split[1] + "</td>\n" +
                     "    <td>" + split[2] + "</td>\n" +
-                    //"    <td>" + split[3] + "</td>\n" +
+                    "    <td>" + split[3]  + "</td>\n" +
                     "  </tr>\n";
                 }
                 html += "</table>\n" +
