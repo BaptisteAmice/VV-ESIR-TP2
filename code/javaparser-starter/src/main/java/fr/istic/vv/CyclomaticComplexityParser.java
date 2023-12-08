@@ -15,7 +15,6 @@ public class CyclomaticComplexityParser extends VoidVisitorWithDefaults<Void> {
     }
 
     public void visitTypeDeclaration(TypeDeclaration<?> declaration, Void arg) {
-        if(!declaration.isPublic()) return;
         System.out.println(declaration.getFullyQualifiedName().orElse("[Anonymous]"));
         for(MethodDeclaration method : declaration.getMethods()) {
             method.accept(this, arg);
@@ -39,7 +38,6 @@ public class CyclomaticComplexityParser extends VoidVisitorWithDefaults<Void> {
 
     @Override
     public void visit(MethodDeclaration declaration, Void arg) {
-        if(!declaration.isPublic()) return;
         System.out.println("  " + declaration.getDeclarationAsString(true, true));
     }
     
