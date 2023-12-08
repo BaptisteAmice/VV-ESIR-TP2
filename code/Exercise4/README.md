@@ -11,3 +11,6 @@ In order to test the code, you can use the following command:
 ```
 
 The code file contained in this folder is just a copy of the one contained in the src/ folder.
+
+When testing it on common-collection-master, we see that it has several hundred of 
+private fields without public getters.
