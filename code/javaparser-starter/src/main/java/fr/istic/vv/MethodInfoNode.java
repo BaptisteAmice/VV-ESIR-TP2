@@ -1,26 +1,32 @@
 package fr.istic.vv;
 
 import java.util.ArrayList;
-
+/**
+ * Store in a tree the informations for a package, class, method, complexity...
+ */
 public class MethodInfoNode{
-    private EnumTypeInfo type = EnumTypeInfo.ROOT; //type of information (exemple package)
-    private String value = "none";
+    //private EnumTypeInfo type = EnumTypeInfo.ROOT; //type of information (exemple package)
+    private String value = "none"; // default value
     private ArrayList<MethodInfoNode> childs;
     private int nbChilds = 0;
 
+    /**
+     * create node with on value
+     */
     public MethodInfoNode() {
         childs = new ArrayList<>();
     }
-    public MethodInfoNode(EnumTypeInfo typeInfo, String value) {
+
+    /**
+     * create node with on value
+     * @param value of the node
+     */
+    public MethodInfoNode(String value) {//EnumTypeInfo typeInfo, 
         this.value = value;
-        this.type = typeInfo;
+        //this.type = typeInfo;
         childs = new ArrayList<>();
     }
-
-    public EnumTypeInfo getType() {
-        return type;
-    }
-
+    
     public String getValue() {
         return value;
     }

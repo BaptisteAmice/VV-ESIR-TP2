@@ -16,10 +16,10 @@ import java.nio.file.Paths;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        if(args.length < 1) {
+        /*if(args.length < 1) {
             System.err.println("Should provide the path to the source code and the path to the report");
             System.exit(1);
-        }
+        }*/
 
         File file = new File(args[0]);
         if(!file.exists() || !file.isDirectory() || !file.canRead()) {
@@ -38,22 +38,23 @@ public class Main {
         });*/
 
         //print all private fields without public getter
-        PrivateFieldsPrinter printer = new PrivateFieldsPrinter();
+        /*PrivateFieldsPrinter printer = new PrivateFieldsPrinter();
         root.parse("", (localPath, absolutePath, result) -> {
             //System.out.println(printer.getPrivateAttributesNamesWithoutPublicGetter());
             printer.generateHtmlReport(printer.getPrivateAttributesNamesWithoutPublicGetter(),args[1]);
             result.ifSuccessful(unit -> unit.accept(printer, null));
             return SourceRoot.Callback.Result.DONT_SAVE;
-        });
+        });*/
 
-        /* 
+        
         CyclomaticComplexityParser cycloParser = new CyclomaticComplexityParser();
         root.parse("", (localPath, absolutePath, result) -> {
             result.ifSuccessful(unit -> unit.accept(cycloParser, null));
             return SourceRoot.Callback.Result.DONT_SAVE;
-        });*/
-
-
+        });
+        System.out.println("==============================================");
+        ReportMaker report = new ReportMaker(cycloParser.getCurrentInfo(), args[1]);
+        report.histogramByPackage();
     }
 
 
