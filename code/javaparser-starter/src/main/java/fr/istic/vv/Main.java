@@ -16,10 +16,10 @@ import java.nio.file.Paths;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        /*if(args.length < 1) {
-            System.err.println("Should provide the path to the source code and the path to the report");
+        if(args.length < 1) {
+            System.err.println("Should provide the path to the source code and the destination path to the report");
             System.exit(1);
-        }*/
+        }
 
         File file = new File(args[0]);
         if(!file.exists() || !file.isDirectory() || !file.canRead()) {
@@ -46,7 +46,7 @@ public class Main {
             return SourceRoot.Callback.Result.DONT_SAVE;
         });*/
 
-        
+        //Print cyclomatic complexity
         CyclomaticComplexityParser cycloParser = new CyclomaticComplexityParser();
         root.parse("", (localPath, absolutePath, result) -> {
             result.ifSuccessful(unit -> unit.accept(cycloParser, null));
