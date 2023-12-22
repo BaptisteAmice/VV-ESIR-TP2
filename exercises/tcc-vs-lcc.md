@@ -18,3 +18,8 @@ LCC can be lower than TCC when pairs are connected indirectly.
 In our example it could have been if the cost method used the number of wheels.
 
 
+------------------------------
+------------------------------
+Authors:
+- Baptiste AMICE
+- Ulysse-Néo LARTIGAUD
